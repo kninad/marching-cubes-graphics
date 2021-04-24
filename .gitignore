@@ -1,0 +1,15 @@
+# Extern
+/extern/.cache
+/extern/nanogui
+/extern/glm
+/extern/*
+
+# Build
+*build*/*
+
+# Useless files
+.DS_STORE
+*.swp
+.idea/*
+.vscode/
+/data
