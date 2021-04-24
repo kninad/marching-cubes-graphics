@@ -8,6 +8,12 @@ Project
 - RAM requirements -- how many points are generated and what is going on? how does the
   memory requirements scale drastically!
 
+done: camera, shader headers, gui.
+
+todo: main-renderer, nano gui file, meshing file, raw data utils 
+
+
+
 Marching Cubes
 ==============
 

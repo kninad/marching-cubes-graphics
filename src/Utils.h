@@ -93,7 +93,13 @@ namespace Utils
         bool rotate_zdown = false;
 
     public:
-        void init(GLFWwindow *window)
+
+        GuiControl(GLFWwindow *window, Camera *camera)
+        {
+            init(window, camera);
+        }
+
+        void init(GLFWwindow *window, Camera *camera)
         {
             if (screen)
             {
@@ -186,7 +192,7 @@ namespace Utils
             });
         }
 
-        void camera_controls()
+        void camera_movement_controls()
         {
             GLfloat current_frame = glfwGetTime();
             delta_time = current_frame - last_frame_time;
