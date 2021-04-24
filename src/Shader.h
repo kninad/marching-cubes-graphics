@@ -1,12 +1,19 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <GL/glew.h>
+/**
+ * Shader Class adopted from learnopengl.com
+ * */
 
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
+
+#include <GL/glew.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 class Shader
 {
@@ -96,7 +103,36 @@ public:
         glUseProgram(this->program);
     }
 
-    
+    // Utility uniform functions
+    void setBool(const std::string &name, bool value) const
+    {
+        glUniform1i(glGetUniformLocation(program, name.c_str()), (int)value);
+    }
+
+    void setInt(const std::string &name, int value) const
+    {
+        glUniform1i(glGetUniformLocation(program, name.c_str()), value);
+    }
+
+    void setFloat(const std::string &name, float value) const
+    {
+        glUniform1f(glGetUniformLocation(program, name.c_str()), value);
+    }
+
+    void setVec3(const std::string &name, const glm::vec3 &vec)
+    {
+        glUniform3fv(glGetUniformLocation(program, name.c_str()), 1, glm::value_ptr(vec));
+    }
+
+    void setVec4(const std::string &name, const glm::vec4 &vec)
+    {
+        glUniform4fv(glGetUniformLocation(program, name.c_str()), 1, glm::value_ptr(vec));
+    }
+
+    void setMat4(const std::string &name, const glm::mat4 &mat)
+    {
+        glUniformMatrix4fv(glGetUniformLocation(program, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
+    }
 
 private:
     void check_compile_error(GLuint shader, std::string type)
