@@ -10,8 +10,14 @@ Project
 
 done: camera, shader headers, gui.
 
-todo: main-renderer, nano gui file, meshing file, raw data utils 
+mesh also kind of done since need to have position and normal data (i.e face data like Object.h) 
+and then pass it onto VBO.
 
+todo: main-renderer, meshing file, raw data utils 
+
+Object.h should hold the mesh object
+
+need to write a marching cubes specific header / source file.
 
 
 Marching Cubes

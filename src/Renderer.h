@@ -14,7 +14,7 @@
 
 #include "Camera.h"
 #include "Lighting.h"
-// #include "Object.h"
+#include "Object.h"
 #include "Shader.h"
 #include "Utils.h"
 
