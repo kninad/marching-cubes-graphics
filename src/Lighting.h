@@ -6,12 +6,9 @@
 
 class Lighting
 {
-
-    glm::vec3 reset_position;
-
+private:
     struct Direction_Light
     {
-        // TODO: Define direct light parameters
         glm::vec3 direction;
         glm::vec3 ambient;
         glm::vec3 diffuse;
@@ -20,7 +17,6 @@ class Lighting
 
     struct Point_Light
     {
-        // TODO: Define point light parameters
         glm::vec3 position;
         glm::vec3 ambient;
         glm::vec3 diffuse;
@@ -29,8 +25,9 @@ class Lighting
 
 public:
     Direction_Light direction_light;
-    Point_Light point_light;
-    
+    Point_Light point_light;   
+    const glm::vec3 CCS_lightDir = glm::vec3(0.0f, 1.0f, 1.0f);
+    glm::vec3 reset_position;
 
     Lighting() {}
 
@@ -46,9 +43,6 @@ public:
         return reset_position;
     }
 
-    /*
-    * TODO: Init all lighting parameters
-    */
     void init()
     {   
         // Some placeholder init values
@@ -57,12 +51,12 @@ public:
         direction_light.diffuse = glm::vec3(0.4f, 0.4f, 0.4f);
         direction_light.specular = glm::vec3(0.5f, 0.5f, 0.5f);
         
-        point_light.position = glm::vec3(0.0f, 0.0f, 10.0f);
+        point_light.position = glm::vec3(0.5f, 0.5f, 2.5f);
         point_light.ambient = glm::vec3(0.05f, 0.05f, 0.05f);
         point_light.diffuse = glm::vec3(0.8f, 0.8f, 0.8f);
         point_light.specular = glm::vec3(1.0f, 1.0f, 1.0f);
 
-        reset_position = point_light.position; // just for init
+        reset_position = glm::vec3(0.5f, 0.5f, 2.5f); // just for init
 
     };
 };

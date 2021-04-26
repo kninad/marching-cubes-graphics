@@ -37,10 +37,7 @@ const unsigned int SCR_HEIGHT = 900;
 class Camera
 {
    public:
-    /*
-     * Define Camera parameters
-     */
-    
+  
     glm::vec3 position, front, up, world_up; // u,v,n vectors
     glm::vec3 right;  // defined using front and up vectors (cross product)
     float yaw, pitch, roll;
@@ -52,8 +49,8 @@ class Camera
     /*
      * Initialize Camera parameters
      */
-    Camera(glm::vec3 position_ = glm::vec3(0.0f, 0.0f, 0.0f),
-           glm::vec3 w_up_ = glm::vec3(0.0f, 1.0f, 0.0f), float yaw_ = YAW, float pitch_ = PITCH,
+    Camera(glm::vec3 position_ = glm::vec3(0.5f, 0.5f, 2.5f), 
+           glm::vec3 w_up_ = glm::vec3(0.0f, -1.0f, 0.0f), float yaw_ = YAW, float pitch_ = PITCH,
            float roll_ = ROLL, unsigned int width_ = SCR_WIDTH, unsigned int height_ = SCR_HEIGHT)
         : front(glm::vec3(0.0f, 0.0f, -1.0f)), zoom(ZOOM)
     {
@@ -66,14 +63,11 @@ class Camera
 
     void init() { reset(); };
 
-    /*
-     * Reset the camera to its original position (i.e., object centered inside the window)
-    */
     void reset()
     {
         position = glm::vec3(0.5f, 0.5f, 2.5f);
         front = glm::vec3(0.0f, 0.0f, -1.0f);
-        world_up = glm::vec3(0.0f, 1.0f, 0.0f);
+        world_up = glm::vec3(0.0f, -1.0f, 0.0f);
         yaw = YAW;
         pitch = PITCH;
         roll = ROLL;
@@ -84,15 +78,13 @@ class Camera
         zoom = ZOOM;
     }
 
-    // returns the view matrix calculated using Euler Angles and the LookAt Matrix
+
     glm::mat4 GetViewMatrix()
     {
         return glm::lookAt(position, position + front, up);
     }
 
-    /*
-     * TODO: Implement each movement
-     */
+
     void process_keyboard(Camera_Movement direction, GLfloat velocity)
     {
         // float rotation_sensitivity = 0.3f;
@@ -107,10 +99,12 @@ class Camera
         if (direction == LEFT)
         {
             position -= glm::normalize(glm::cross(front, up)) * velocity;
+            // position -= right * velocity;
         }
         if (direction == RIGHT)
         {
             position += glm::normalize(glm::cross(front, up)) * velocity;
+            // position += right * velocity;
         }
         if (direction == UP)
         {
@@ -173,7 +167,7 @@ class Camera
         tmp_world_up.x = glm::sin(glm::radians(roll));
         tmp_world_up.y = glm::cos(glm::radians(roll));
         tmp_world_up.z = 0.0;
-        world_up = tmp_world_up;
+        world_up = -1.0f * tmp_world_up;
 
         right = glm::normalize(glm::cross(front, world_up));
         up = glm::normalize(glm::cross(right, front));
