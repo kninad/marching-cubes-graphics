@@ -14,6 +14,7 @@ TODO
 ----
 
 - Smooth vs Flat Shading -- similar to the task from Homework 02.
+- Update GUI display -- only essential parts
 - Better normal computation -- take average from all faces! Doing this efficiently?
 - Use other volume data models -- take from internet.
 - Make a GIF file? -- varying view depth and number of slices etc
