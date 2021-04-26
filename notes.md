@@ -28,6 +28,8 @@ TODO
 - Read the other advances papers and try to write down your own summary. There is so much
   to learn in this topic and its seems approachable and exciting at the same time! Something
   to ponder about when trying to relax from work/research!
+- Add even more references from the last two lectures of the course! Make detailed notes
+  about it!
 
 Marching Cubes
 ==============
