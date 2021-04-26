@@ -8,20 +8,26 @@ References:
 1. https://dgr582.com/articles/2020/marching-cubes
 2. http://paulbourke.net/geometry/polygonise/
 3. http://www.it.hiof.no/~borres/j3d/explain/marching/p-march.html
+4. Dual Contouring: https://www.boristhebrave.com/2018/04/15/dual-contouring-tutorial/
+5. Even more advances: https://swiftcoder.wordpress.com/planets/isosurface-extraction/
 
 
 TODO
 ----
 
-- Smooth vs Flat Shading -- similar to the task from Homework 02.
+- Smooth vs Flat Shading -- similar to the task from Homework 02!
 - Update GUI display -- only essential parts
-- Better normal computation -- take average from all faces! Doing this efficiently?
 - Use other volume data models -- take from internet.
 - Make a GIF file? -- varying view depth and number of slices etc
 - Why is RAM usage so high? -- memory leak? RAM requirements -- how many points are 
   generated and what is going on? how does the memory requirements scale drastically!
 - Effecient Techniques as a follow up?
 
+- Better normal computation -- take average from all faces! Doing this efficiently?
+- Dual Contouring implementation
+- Read the other advances papers and try to write down your own summary. There is so much
+  to learn in this topic and its seems approachable and exciting at the same time! Something
+  to ponder about when trying to relax from work/research!
 
 Marching Cubes
 ==============
