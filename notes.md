@@ -1,23 +1,25 @@
 Project
 =======
 
-- Use other volume data models
-- Effecient Techniques
-- Make a GIF file? -- varying depth etc
-- Why is RAM usage so high? -- memory leak?
-- RAM requirements -- how many points are generated and what is going on? how does the
-  memory requirements scale drastically!
+**Implmentation of Marching Cubes Algorithm**
 
-done: camera, shader headers, gui.
+References:
 
-mesh also kind of done since need to have position and normal data (i.e face data like Object.h) 
-and then pass it onto VBO.
+1. https://dgr582.com/articles/2020/marching-cubes
+2. http://paulbourke.net/geometry/polygonise/
+3. http://www.it.hiof.no/~borres/j3d/explain/marching/p-march.html
 
-todo: main-renderer, meshing file, raw data utils 
 
-Object.h should hold the mesh object
+TODO
+----
 
-need to write a marching cubes specific header / source file.
+- Smooth vs Flat Shading -- similar to the task from Homework 02.
+- Better normal computation -- take average from all faces! Doing this efficiently?
+- Use other volume data models -- take from internet.
+- Make a GIF file? -- varying view depth and number of slices etc
+- Why is RAM usage so high? -- memory leak? RAM requirements -- how many points are 
+  generated and what is going on? how does the memory requirements scale drastically!
+- Effecient Techniques as a follow up?
 
 
 Marching Cubes
@@ -50,13 +52,7 @@ Due to computational constraints we need to sample the function at discrete poin
 space in a grid like fashion. Let's see how the 2D counterpart for surface extraction aptly
 named *marching squares*.
 
-
-
-
-
-
-
-
+Image based demo and later explanation of marching squares.
 
 
 
