@@ -12,6 +12,7 @@
 #include <nanogui/nanogui.h>
 
 #include "Camera.h"
+#include "Lighting.h"
 
 namespace Utils
 {
@@ -58,34 +59,55 @@ namespace Utils
 
     // GUI CONTROLS
 
-    nanogui::Screen *screen = nullptr;
-
     class GuiControl
     {
     public:
-        nanogui::Color color;
-        // camera
+        nanogui::Color color = nanogui::Color(0.4f, 0.6f, 0.9f, 1.0f);
+        // Camera Parameters
         float z_far = 1000.0f;
         float z_near = 1.0f;
         float fov = 45.0f;
-        // model
+        GLfloat delta_time, last_frame_time;
+        // Model Rendering
         render_type renderType = TRIANGLE;
         culling_type cullType = CW;
         shading_type shadingType = SMOOTH;
         model3d_t modelType = TEAPOT;
+        bool reloadModel = true;
+        bool reset = false;
+        // Marching Cubes Paramters
         float view_depth = 0.01f;
         int num_cuts = 50;
-        bool reloadModel = false;
-        bool reset = false;
 
-        static bool keys[1024];
+        // static bool keys[1024];
+        nanogui::Screen *gui_screen = nullptr;
+
+        // Lighting Controls
+        bool pLight_reset = false; // Reset dynamic point light?
+
+        bool pLight_rotX = false;
+        bool pLight_rotY = false;
+        bool pLight_rotZ = false;
+
+        bool on_dirL = false;
+        nanogui::Color dirL_amb = nanogui::Color(0.05f, 0.05f, 0.05f, 1.0f);
+        nanogui::Color dirL_dif = nanogui::Color(0.4f, 0.4f, 0.4f, 1.0f);
+        nanogui::Color dirL_spc = nanogui::Color(0.5f, 0.5f, 0.5f, 1.0f);
+
+        bool on_posL = false;
+        nanogui::Color posL_amb = nanogui::Color(0.05f, 0.05f, 0.05f, 1.0f);
+        nanogui::Color posL_dif = nanogui::Color(0.8f, 0.8f, 0.8f, 1.0f);
+        nanogui::Color posL_spc = nanogui::Color(1.0f, 1.0f, 1.0f, 1.0f);
+
 
     private:
         // camera
         Camera *camera = nullptr;
-        GLfloat delta_time, last_frame_time;
-        float campos_x, campos_y, campos_z;
-        float cam_rotate_value;
+        // lighting
+        Lighting *lighting = nullptr;
+        // camera specific params
+        float campos_x = 0.5f, campos_y = 0.5f, campos_z = 2.5f;
+        float cam_rotate_value = 0.5;
         bool rotate_xup = false;
         bool rotate_yup = false;
         bool rotate_zup = false;
@@ -94,11 +116,18 @@ namespace Utils
         bool rotate_zdown = false;
 
     public:
-        GuiControl(GLFWwindow *window, Camera *camera);
 
-        void init(GLFWwindow *window, Camera *camera);
+        GuiControl() {};
+
+        GuiControl(GLFWwindow *window, Camera *camera, Lighting *lighting);
+
+        void init(GLFWwindow *window, Camera *camera, Lighting *lighting);
 
         void camera_movement_controls();
+
+        void screen_draw_widgets();
+
+        void update_lighting();
     };
 
 };

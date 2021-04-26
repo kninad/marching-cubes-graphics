@@ -2,6 +2,10 @@
 
 const std::string base_path = "../src/data/";
 
+bool keys[1024];
+
+nanogui::Screen *screen = nullptr;
+
 glm::vec3 Utils::get_dims(Utils::model3d_t model_type)
 {
     if (model_type == Utils::BUCKY)
@@ -41,7 +45,7 @@ GLubyte *Utils::load_3d_raw_data(std::string texture_path, glm::vec3 dimension)
     }
     else
     {
-        std::cout << "OK: open .raw file successed" << std::endl;
+        std::cout << "OK: open .raw file success." << std::endl;
     }
     if (fread(data, sizeof(char), size, fp) != size)
     {
@@ -50,7 +54,7 @@ GLubyte *Utils::load_3d_raw_data(std::string texture_path, glm::vec3 dimension)
     }
     else
     {
-        std::cout << "OK: read .raw file successed" << std::endl;
+        std::cout << "OK: read .raw file success." << std::endl;
     }
     fclose(fp);
     return data;
@@ -80,6 +84,7 @@ GLubyte *Utils::load_3Dfrom_type(Utils::model3d_t model_type)
     if (!data)
     {
         std::cout << "Error in reading raw data! data pointer is currently set to null." << std::endl;
+        exit(1);
     }
     return data;
 }
@@ -100,16 +105,18 @@ glm::vec3 Utils::ngolor_to_glm(nanogui::Color color)
     return ret_color;
 }
 
+// ************* Gui Control Class Implementation *************
 
-// ************* Gui Control Class *************
-
-Utils::GuiControl::GuiControl(GLFWwindow *window, Camera *camera)
+Utils::GuiControl::GuiControl(GLFWwindow *window, Camera *camera, Lighting *lighting)
 {
-    init(window, camera);
+    init(window, camera, lighting);
 }
 
-void Utils::GuiControl::init(GLFWwindow *window, Camera *camera)
+void Utils::GuiControl::init(GLFWwindow *window, Camera *camera, Lighting *lighting)
 {
+    this->camera = camera;
+    this->lighting = lighting;
+
     if (screen)
     {
         delete screen;
@@ -120,17 +127,14 @@ void Utils::GuiControl::init(GLFWwindow *window, Camera *camera)
     bool enabled = true;
 
     // ********************************************************************
-    // 1st nanogui GUI
+    // 1st nanogui GUI: CAMERA and MODEL controls
     nanogui::FormHelper *gui = new nanogui::FormHelper(screen);
-    nanogui::ref<nanogui::Window> nanoguiWindow = gui->addWindow(Eigen::Vector2i(0, 0), "Camera Controls");
+    nanogui::ref<nanogui::Window> nanoguiWindow = gui->addWindow(Eigen::Vector2i(0, 0), "Camera and MC");
 
-    gui->addGroup("Color");
-    gui->addVariable("Object Color", color);
-
-    gui->addGroup("Camera Position");
-    gui->addVariable("X", campos_x)->setSpinnable(true);
-    gui->addVariable("Y", campos_y)->setSpinnable(true);
-    gui->addVariable("Z", campos_z)->setSpinnable(true);
+    // gui->addGroup("Camera Position");
+    // gui->addVariable("X", campos_x)->setSpinnable(true);
+    // gui->addVariable("Y", campos_y)->setSpinnable(true);
+    // gui->addVariable("Z", campos_z)->setSpinnable(true);
 
     gui->addGroup("Camera Rotation");
     gui->addVariable("Rotate Value", cam_rotate_value)->setSpinnable(true);
@@ -141,22 +145,52 @@ void Utils::GuiControl::init(GLFWwindow *window, Camera *camera)
     gui->addButton("Rotate Front +", [this]() { rotate_zup = true; });
     gui->addButton("Rotate Front -", [this]() { rotate_zdown = true; });
 
-    gui->addGroup("Camera Zoom");
+    gui->addGroup("Other Cam Controls");
     gui->addVariable("Z Near", z_near)->setSpinnable(true);
     gui->addVariable("Z Far", z_far)->setSpinnable(true);
     gui->addVariable("FOV", fov)->setSpinnable(true);
-
-    gui->addGroup("Configuration");
-    gui->addVariable("Model Name", modelType, enabled)
-        ->setItems({"BUCKY", "TEAPOT", "BONSAI", "HEAD"});
-    gui->addVariable("Render Type", renderType, enabled)
-        ->setItems({"POINT", "LINE", "TRIANGLE"});
-    // gui->addVariable("Cull Type", cullType, enabled)->setItems({"CW", "CCW"});
-    gui->addVariable("Shading Type", shadingType, enabled)->setItems({"SMOOTH", "FLAT"});
-    gui->addButton("Reload Model", [this]() { reloadModel = true; });
     gui->addButton("Reset Camera", [this]() { reset = true; });
+
+    // Marching Cubes paras: Cuts and View Depth.
+    gui->addGroup("Marching Cubes Params");
     gui->addVariable("Viewing Depth", view_depth)->setSpinnable(true);
     gui->addVariable("Num Cuts", num_cuts);
+    gui->addButton("Reload Model", [this]() { reloadModel = true; });
+
+    // ********************************************************************
+
+    // 2nd nanogui GUI: Lighting Controls
+    nanogui::FormHelper *gui_2 = new nanogui::FormHelper(screen);
+    nanogui::ref<nanogui::Window> nanoguiWindow_2 =
+        gui_2->addWindow(Eigen::Vector2i(0, 0), "Lighting and Config");
+
+    // Model Configuration: 3D Model Type, Render type, Culling, Shading, Reload, Reset,
+    gui_2->addGroup("Configuration");
+    gui_2->addVariable("Model Name", modelType, enabled)
+        ->setItems({"BUCKY", "TEAPOT", "BONSAI", "HEAD"});
+    gui_2->addVariable("Render Type", renderType, enabled)
+        ->setItems({"POINT", "LINE", "TRIANGLE"});
+    // gui->addVariable("Cull Type", cullType, enabled)->setItems({"CW", "CCW"});
+    gui_2->addVariable("Shading Type", shadingType, enabled)->setItems({"SMOOTH", "FLAT"});
+
+    gui_2->addGroup("Color");
+    gui_2->addVariable("Object Color", color);
+
+    gui_2->addGroup("Lighting");
+    gui_2->addVariable("Dir Light Status", on_dirL);
+    gui_2->addVariable("DirL Ambient Color", dirL_amb);
+    gui_2->addVariable("DirL Diffuse Color", dirL_dif);
+    gui_2->addVariable("DirL Specular Color", dirL_spc);
+
+    gui_2->addVariable("Pos Light Status", on_posL);
+    gui_2->addVariable("PosL Ambient Color", posL_amb);
+    gui_2->addVariable("PosL Diffuse Color", posL_dif);
+    gui_2->addVariable("PosL Specular Color", posL_spc);
+
+    gui_2->addGroup("Pos Light Rotation");
+    gui_2->addVariable("Point Light Rot X", pLight_rotX);
+    gui_2->addVariable("Point Light Rot Z", pLight_rotZ);
+    gui_2->addButton("Reset Point Light", [this]() { pLight_reset = true; });
 
     // ********************************************************************
 
@@ -206,8 +240,9 @@ void Utils::GuiControl::camera_movement_controls()
     GLfloat current_frame = glfwGetTime();
     delta_time = current_frame - last_frame_time;
     last_frame_time = current_frame;
+    // delta_time = cam_rotate_value;
 
-    camera->position = glm::vec3(campos_x, campos_y, campos_z);
+    // camera->position = glm::vec3(campos_x, campos_y, campos_z);
 
     // Change camera FOV or Zoom
     // Extra part!
@@ -278,5 +313,61 @@ void Utils::GuiControl::camera_movement_controls()
         camera->process_keyboard(ROTATE_Z_DOWN, cam_rotate_value);
         rotate_zdown = false;
     }
+
+    // Based on current camera position, update the values for nano gui
+    // campos_x = camera->position[0];
+    // campos_y = camera->position[1];
+    // campos_z = camera->position[2];
+}
+
+void Utils::GuiControl::screen_draw_widgets()
+{
+    screen->drawWidgets();
+}
+
+void Utils::GuiControl::update_lighting()
+{
+    lighting->direction_light.direction = glm::vec3(glm::inverse(camera->GetViewMatrix()) *
+                                                    glm::vec4(lighting->CCS_lightDir, 0.0f));
+    
+    lighting->direction_light.ambient = Utils::ngolor_to_glm(dirL_amb);
+    lighting->direction_light.diffuse = Utils::ngolor_to_glm(dirL_dif);
+    lighting->direction_light.specular = Utils::ngolor_to_glm(dirL_spc);
+
+    lighting->point_light.ambient = Utils::ngolor_to_glm(posL_amb);
+    lighting->point_light.diffuse = Utils::ngolor_to_glm(posL_dif);
+    lighting->point_light.specular = Utils::ngolor_to_glm(posL_spc);
+
+    // Rotation of Point Light
+    glm::vec3 pointL_pos = lighting->point_light.position;
+    float theta = (float) glfwGetTime();
+    float sin_theta = glm::sin(theta);
+    float cos_theta = glm::cos(theta);
+    if(pLight_rotX) {
+        float y = pointL_pos[1];
+        float z = pointL_pos[2];
+        float mag = glm::sqrt(y*y + z*z);
+        pointL_pos[1] = mag * cos_theta;
+        pointL_pos[2] = mag * sin_theta;
+        lighting->point_light.position = pointL_pos;
+    } else if(pLight_rotY) {
+        float x = pointL_pos[1];
+        float z = pointL_pos[2];
+        float mag = glm::sqrt(x*x + z*z);
+        pointL_pos[0] = mag * cos_theta;
+        pointL_pos[2] = mag * sin_theta;
+        lighting->point_light.position = pointL_pos;
+    } else if(pLight_rotZ) {
+        float x = pointL_pos[0];
+        float y = pointL_pos[1];
+        float mag = glm::sqrt(y*y + x*x);
+        pointL_pos[0] = mag * cos_theta;
+        pointL_pos[1] = mag * sin_theta;
+        lighting->point_light.position = pointL_pos;
+    } else if(pLight_reset) {
+        lighting->point_light.position = lighting->get_reset_pos();
+        pLight_reset = false; // reset the value back to sane default.
+    }
+
 }
 
