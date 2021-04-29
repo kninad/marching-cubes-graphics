@@ -191,8 +191,20 @@ int MarchingCubes::get_index(int x, int y, int z, int num_x, int num_y)
 
 glm::vec3 MarchingCubes::vertex_interpolation(float isoLevel, const GridCell &cell, int p1, int p2)
 {
-    float lamb = (isoLevel - cell.val[p1]) / (cell.val[p2] - cell.val[p1]);
-    return cell.pnt[p1] + lamb * (cell.pnt[p2] - cell.pnt[p1]);
+    // alpha = (isolevel - cell.p1.val) / (cell.p2.val - cell.p1.val) 
+    // point = cell.p1 + alpha * (cell.p2 - cell.p1)
+    const float EPSILON = 1e-6; // check against numerical errors
+    float alpha; 
+    if (glm::abs(cell.val[p2] - cell.val[p1]) < EPSILON)
+    {
+        std::cout << "[DEBUG] Too Close for comfort!" << std::endl;
+        alpha = 0.5f;
+    }
+    else
+    {
+        alpha = (isoLevel - cell.val[p1]) / (cell.val[p2] - cell.val[p1]);
+    }
+    return cell.pnt[p1] + alpha * (cell.pnt[p2] - cell.pnt[p1]);
 }
 
 
