@@ -15,9 +15,10 @@ References:
 TODO
 ----
 
-- Smooth vs Flat Shading -- similar to the task from Homework 02!
-- Update GUI display -- only essential parts
-- Use other volume data models -- take from internet.
+- Smooth vs Flat Shading -- similar to the task from Homework 02! But need to store 
+  vertex normals interpolated from the faces it lies on.
+- Update GUI display -- only essential parts -- DONE.
+- Use other volume data models -- take from internet -- DONE
 - Make a GIF file? -- varying view depth and number of slices etc
 - Why is RAM usage so high? -- memory leak? RAM requirements -- how many points are 
   generated and what is going on? how does the memory requirements scale drastically!
@@ -30,6 +31,17 @@ TODO
   to ponder about when trying to relax from work/research!
 - Add even more references from the last two lectures of the course! Make detailed notes
   about it!
+
+Parameters
+----------
+
+- Bucky: 0.6, 30
+- Teapot: 0.1, 120
+- Tooth: 0.4, 90
+- Engine: 0.5, 125
+- Lobster: 0.2, 35
+- Bonsai: 0.11, 150
+- Head: 0.5, 150
 
 Marching Cubes
 ==============
