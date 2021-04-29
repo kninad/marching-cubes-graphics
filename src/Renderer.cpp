@@ -193,8 +193,9 @@ void Renderer::setup_uniform_values(Shader &shader)
     // Positional Light Uniforms
     shader.setInt("on_Plight", m_gui->on_posL);
     shader.setVec3("plight_pos", m_lightings->point_light.position);
-    shader.setVec3("plight_pos", glm::vec3(0, -1.5, 0));
+    // shader.setVec3("plight_pos", glm::vec3(0, -1.5, 0));
     shader.setVec3("plight_amb", m_lightings->point_light.ambient);
     shader.setVec3("plight_dif", m_lightings->point_light.diffuse);
     shader.setVec3("plight_spc", m_lightings->point_light.specular);
+
 }

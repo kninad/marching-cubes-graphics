@@ -153,7 +153,7 @@ void Utils::GuiControl::init(GLFWwindow *window, Camera *camera, Lighting *light
     // ********************************************************************
     // 1st nanogui GUI: CAMERA and MODEL controls
     nanogui::FormHelper *gui = new nanogui::FormHelper(screen);
-    nanogui::ref<nanogui::Window> nanoguiWindow = gui->addWindow(Eigen::Vector2i(0, 0), "Camera and MC");
+    nanogui::ref<nanogui::Window> nanoguiWindow = gui->addWindow(Eigen::Vector2i(1010, 0), "Camera and MC");
 
     // gui->addGroup("Camera Position");
     // gui->addVariable("X", campos_x)->setSpinnable(true);
@@ -194,8 +194,8 @@ void Utils::GuiControl::init(GLFWwindow *window, Camera *camera, Lighting *light
         ->setItems({"BUCKY", "TEAPOT", "BONSAI", "HEAD", "LOBSTER", "ENGINE", "TOOTH"});
     gui_2->addVariable("Render Type", renderType, enabled)
         ->setItems({"POINT", "LINE", "TRIANGLE"});
-    // gui->addVariable("Cull Type", cullType, enabled)->setItems({"CW", "CCW"});
-    gui_2->addVariable("Shading Type", shadingType, enabled)->setItems({"SMOOTH", "FLAT"});
+    // gui_2->addVariable("Cull Type", cullType, enabled)->setItems({"CW", "CCW"});
+    // gui_2->addVariable("Shading Type", shadingType, enabled)->setItems({"SMOOTH", "FLAT"});
 
     gui_2->addGroup("Color");
     gui_2->addVariable("Object Color", color);
@@ -213,6 +213,7 @@ void Utils::GuiControl::init(GLFWwindow *window, Camera *camera, Lighting *light
 
     gui_2->addGroup("Pos Light Rotation");
     gui_2->addVariable("Point Light Rot X", pLight_rotX);
+    gui_2->addVariable("Point Light Rot y", pLight_rotY);
     gui_2->addVariable("Point Light Rot Z", pLight_rotZ);
     gui_2->addButton("Reset Point Light", [this]() { pLight_reset = true; });
 

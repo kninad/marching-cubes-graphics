@@ -65,7 +65,7 @@ namespace Utils
     class GuiControl
     {
     public:
-        nanogui::Color color = nanogui::Color(0.4f, 0.6f, 0.9f, 1.0f);
+        nanogui::Color color = nanogui::Color(0.5f, 0.5f, 0.5f, 1.0f);
         // Camera Parameters
         float z_far = 1000.0f;
         float z_near = 1.0f;
@@ -79,7 +79,7 @@ namespace Utils
         bool reloadModel = true;
         bool reset = false;
         // Marching Cubes Paramters
-        float view_depth = 0.01f;
+        float view_depth = 0.1f;
         int num_cuts = 100;
 
         // static bool keys[1024];
@@ -110,7 +110,7 @@ namespace Utils
         Lighting *lighting = nullptr;
         // camera specific params
         float campos_x = 0.5f, campos_y = 0.5f, campos_z = 2.5f;
-        float cam_rotate_value = 0.5;
+        float cam_rotate_value = 10;
         bool rotate_xup = false;
         bool rotate_yup = false;
         bool rotate_zup = false;
