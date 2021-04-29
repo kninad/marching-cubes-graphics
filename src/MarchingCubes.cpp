@@ -31,6 +31,7 @@ std::vector<TriFace> MarchingCubes::compute_faces(float isoLevel)
     glm::vec3 mu(xmu, ymu, zmu);
 
     std::vector<TriFace> faces;
+    std::vector<VertexPoint> vertices;
 
     for (size_t i = 0; i < gridcells.size(); ++i)
     {
@@ -40,11 +41,10 @@ std::vector<TriFace> MarchingCubes::compute_faces(float isoLevel)
             continue; // De-generate Case
         }
         auto vertex_list = compute_vertex_list(gridcells[i], isoLevel, cubeIndex);
-
-        // Construct Faces using the TriTable
+        
+        // Construct a Triangular Face using the TriTable
         for (size_t k = 0; McLookup::TriTable[cubeIndex][k] != -1; k += 3)
         {
-            // Face *f = new Face();
             TriFace triangle;
             for (size_t j = 0; j < 3; j++)
             {
@@ -56,9 +56,11 @@ std::vector<TriFace> MarchingCubes::compute_faces(float isoLevel)
             glm::vec3 normal_vec = glm::cross(edge_01, edge_02);
             normal_vec = glm::normalize(normal_vec);
             triangle.normal = normal_vec;
+
             for (int t = 0; t < 3; t++)
-            {
+            {                
                 triangle.points[t] *= mu;
+                int vertId = McLookup::TriTable[cubeIndex][k + t];
             }
             faces.push_back(triangle);
         }
@@ -66,6 +68,85 @@ std::vector<TriFace> MarchingCubes::compute_faces(float isoLevel)
 
     return faces;
 }
+
+
+
+std::vector<VertexPoint> MarchingCubes::compute_verts(float isoLevel)
+{
+    threshold_iso_level(isoLevel);
+
+    GLfloat xmu = 1.0f / data_dims[0];
+    GLfloat ymu = 1.0f / data_dims[1];
+    GLfloat zmu = 1.0f / data_dims[2];
+    glm::vec3 mu(xmu, ymu, zmu);
+
+    std::vector<VertexPoint> vertices;
+
+    for (size_t i = 0; i < gridcells.size(); ++i)
+    {
+        int cubeIndex = compute_cube_index(gridcells[i], isoLevel);
+        if (McLookup::EdgeTable[cubeIndex] == 0)
+        {
+            continue; // De-generate Case
+        }
+        auto vertex_list = compute_vertex_list(gridcells[i], isoLevel, cubeIndex);
+        std::array<std::vector<glm::vec3>, 12> points_normals;
+
+        // Construct a Triangular Face Normal using the TriTable
+        for (size_t k = 0; McLookup::TriTable[cubeIndex][k] != -1; k += 3)
+        {
+            glm::vec3 trig_points[3];
+            for (size_t j = 0; j < 3; j++)
+            {
+                int vertId = McLookup::TriTable[cubeIndex][k + j];
+                trig_points[j] = vertex_list[vertId];
+            }
+            glm::vec3 edge_01 = trig_points[1] - trig_points[0];
+            glm::vec3 edge_02 = trig_points[2] - trig_points[0];
+            glm::vec3 normal_vec = glm::cross(edge_01, edge_02);
+            normal_vec = glm::normalize(normal_vec);
+
+            for (int t = 0; t < 3; t++)
+            {                
+                int vertId = McLookup::TriTable[cubeIndex][k + t];
+                points_normals[vertId].push_back(normal_vec);
+            }
+        }
+
+        // Average out all normal vector for all 12 points
+        std::array<glm::vec3, 12> points_avg_normals;        
+        for(int t = 0; t < points_normals.size(); t++)
+        {
+            glm::vec3 avg_normal = glm::vec3(0,0,0);
+            if(points_normals[t].empty())
+            {
+                continue;
+            }
+            for(const auto& v : points_normals[t])
+            {
+                avg_normal += v;
+            }
+            avg_normal /= points_normals[t].size();
+            points_avg_normals[t] = avg_normal;
+        }
+
+        for (size_t k = 0; McLookup::TriTable[cubeIndex][k] != -1; k += 3)
+        {            
+            for (size_t j = 0; j < 3; j++)
+            {   
+                VertexPoint pt;
+                int vertId = McLookup::TriTable[cubeIndex][k + j];
+                pt.position = vertex_list[vertId] * mu;
+                pt.normal = points_avg_normals[vertId];
+                vertices.push_back(pt);
+            }
+        }
+    }
+
+    return vertices;
+}
+
+
 
 void MarchingCubes::clear_raw_data()
 {

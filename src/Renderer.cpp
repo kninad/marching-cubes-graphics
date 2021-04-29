@@ -92,6 +92,7 @@ void Renderer::load_models()
     m_cubes.set_3d_model(Utils::load_3Dfrom_type(curr_model), Utils::get_dims(curr_model));
     m_cubes.compute_grid(m_gui->num_cuts);
     m_object.loadFaces(m_cubes.compute_faces(m_gui->view_depth));
+    // m_object.loadFaces(m_cubes.compute_verts(m_gui->view_depth));
     m_cubes.clear_raw_data();
 
     std::cout << "[DEBUG] Object vao verts size:" << m_object.vao_vertices.size() << std::endl;

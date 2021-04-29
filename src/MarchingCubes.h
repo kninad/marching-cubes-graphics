@@ -22,6 +22,12 @@ struct GridCell
     int x, y, z;
 };
 
+struct VertexPoint
+{
+    glm::vec3 position;
+    glm::vec3 normal;
+};
+
 struct TriFace
 {
     glm::vec3 points[3];
@@ -41,6 +47,8 @@ public:
     void compute_grid(int num_slices);
 
     std::vector<TriFace> compute_faces(GLfloat isoLevel);
+
+    std::vector<VertexPoint> compute_verts(GLfloat isoLevel);
 
     void clear_raw_data();
 

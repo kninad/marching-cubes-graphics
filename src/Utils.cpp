@@ -24,6 +24,18 @@ glm::vec3 Utils::get_dims(Utils::model3d_t model_type)
     {
         return glm::vec3(256, 256, 225);
     }
+    else if (model_type == Utils::LOBSTER)
+    {
+        return glm::vec3(301, 324, 56);
+    }
+        else if (model_type == Utils::ENGINE)
+    {
+        return glm::vec3(256, 256, 128);
+    }
+    else if (model_type == Utils::TOOTH)
+    {
+        return glm::vec3(103, 94, 161);
+    }
     else
     {
         std::cout << "invalid model type!";
@@ -78,6 +90,18 @@ GLubyte *Utils::load_3Dfrom_type(Utils::model3d_t model_type)
     else if (model_type == Utils::HEAD)
     {
         data = Utils::load_3d_raw_data(base_path + "Head_256_256_225.raw", glm::vec3(256, 256, 225));
+    }
+    else if (model_type == Utils::LOBSTER)
+    {
+        data = Utils::load_3d_raw_data(base_path + "Lobster_301_324_56.raw", glm::vec3(301, 324, 56));
+    }
+    else if (model_type == Utils::ENGINE)
+    {
+        data = Utils::load_3d_raw_data(base_path + "Engine_256_256_128.raw", glm::vec3(256, 256, 128));
+    }
+    else if (model_type == Utils::TOOTH)
+    {
+        data = Utils::load_3d_raw_data(base_path + "Tooth_103_94_161.raw", glm::vec3(103, 94, 161));
     }
 
     // check for errors
@@ -167,7 +191,7 @@ void Utils::GuiControl::init(GLFWwindow *window, Camera *camera, Lighting *light
     // Model Configuration: 3D Model Type, Render type, Culling, Shading, Reload, Reset,
     gui_2->addGroup("Configuration");
     gui_2->addVariable("Model Name", modelType, enabled)
-        ->setItems({"BUCKY", "TEAPOT", "BONSAI", "HEAD"});
+        ->setItems({"BUCKY", "TEAPOT", "BONSAI", "HEAD", "LOBSTER", "ENGINE", "TOOTH"});
     gui_2->addVariable("Render Type", renderType, enabled)
         ->setItems({"POINT", "LINE", "TRIANGLE"});
     // gui->addVariable("Cull Type", cullType, enabled)->setItems({"CW", "CCW"});

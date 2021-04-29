@@ -45,6 +45,9 @@ namespace Utils
         TEAPOT,
         BONSAI,
         HEAD,
+        LOBSTER,
+        ENGINE,
+        TOOTH,
     };
 
     glm::vec3 get_dims(model3d_t model_type);
@@ -136,3 +139,7 @@ namespace Utils
 // // BostonTeapot_256_256_178.raw
 // // Bucky_32_32_32.raw
 // // Head_256_256_225.raw
+// file:///home/ninad/Documents/devel-github/marching-cubes-graphics/src/data/Tooth_103_94_161.raw
+// file:///home/ninad/Documents/devel-github/marching-cubes-graphics/src/data/Engine_256_256_128.raw
+// file:///home/ninad/Documents/devel-github/marching-cubes-graphics/src/data/Lobster_301_324_56.raw
+
