@@ -38,11 +38,11 @@ class MarchingCubes
 {
 private:
     GLubyte *raw_data_ptr = nullptr;
-    int data_dims[3];
+    glm::ivec3 data_dims;
     std::vector<GridCell> gridcells;
 
 public:
-    void set_3d_model(GLubyte *data, const glm::vec3 &dims);
+    void set_3d_model(GLubyte *data, const glm::ivec3 &dims);
 
     void compute_grid(int num_slices);
 
@@ -59,7 +59,7 @@ private:
 
     int get_index(int x, int y, int z, int num_x, int num_y);
 
-    glm::vec3 vertex_interpolation(float isoLevel, GridCell cell, int p1, int p2);
+    glm::vec3 vertex_interpolation(float isoLevel, const GridCell &cell, int p1, int p2);
 
     void threshold_iso_level(GLfloat &isoLevel);
 

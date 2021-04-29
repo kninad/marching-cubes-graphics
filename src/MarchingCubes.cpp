@@ -1,6 +1,6 @@
 #include "MarchingCubes.h"
 
-void MarchingCubes::set_3d_model(GLubyte *data, const glm::vec3 &dims)
+void MarchingCubes::set_3d_model(GLubyte *data, const glm::ivec3 &dims)
 {
     raw_data_ptr = data;
     data_dims[0] = dims[0];
@@ -14,12 +14,14 @@ void MarchingCubes::compute_grid(int num_slices)
     float y_delta = 1.0f * (data_dims[1]) / (num_slices - 1);
     float z_delta = 1.0f * (data_dims[2]) / (num_slices - 1);
     glm::vec3 deltas = glm::vec3(x_delta, y_delta, z_delta);
-    glm::vec3 n_slices = glm::vec3(num_slices + 2, num_slices + 2, num_slices + 2);
-    // +2 to have space at Top and Bottom i.e for Grid Boundary cases
 
+    glm::ivec3 n_slices = glm::vec3(num_slices + 2, num_slices + 2, num_slices + 2);
+    // +2 to have space at Top and Bottom i.e for Grid Boundary cases
+    glm::ivec3 gridcell_dims = n_slices - 1;
     auto points = get_grid_points(n_slices, deltas);
     fill_cells(n_slices, deltas, points);
 }
+
 
 std::vector<TriFace> MarchingCubes::compute_faces(float isoLevel)
 {
@@ -31,7 +33,6 @@ std::vector<TriFace> MarchingCubes::compute_faces(float isoLevel)
     glm::vec3 mu(xmu, ymu, zmu);
 
     std::vector<TriFace> faces;
-    std::vector<VertexPoint> vertices;
 
     for (size_t i = 0; i < gridcells.size(); ++i)
     {
@@ -49,23 +50,16 @@ std::vector<TriFace> MarchingCubes::compute_faces(float isoLevel)
             for (size_t j = 0; j < 3; j++)
             {
                 int vertId = McLookup::TriTable[cubeIndex][k + j];
-                triangle.points[j] = vertex_list[vertId];
+                triangle.points[j] = vertex_list[vertId] * mu;
             }
             glm::vec3 edge_01 = triangle.points[1] - triangle.points[0];
             glm::vec3 edge_02 = triangle.points[2] - triangle.points[0];
             glm::vec3 normal_vec = glm::cross(edge_01, edge_02);
             normal_vec = glm::normalize(normal_vec);
             triangle.normal = normal_vec;
-
-            for (int t = 0; t < 3; t++)
-            {                
-                triangle.points[t] *= mu;
-                int vertId = McLookup::TriTable[cubeIndex][k + t];
-            }
             faces.push_back(triangle);
         }
     }
-
     return faces;
 }
 
@@ -156,11 +150,9 @@ void MarchingCubes::clear_raw_data()
     }
 }
 
-GLfloat MarchingCubes::trilinear_interpolation(float x, float y, float z)
+
+float MarchingCubes::trilinear_interpolation(float x, float y, float z)
 {
-    /* GLfloat sx = x * (data_dims[0] - 1); */
-    /* GLfloat sy = y * (data_dims[1] - 1); */
-    /* GLfloat sz = z * (data_dims[2] - 1); */
     int v0x = floor(x);
     int v0y = floor(y);
     int v0z = floor(z);
@@ -170,11 +162,11 @@ GLfloat MarchingCubes::trilinear_interpolation(float x, float y, float z)
         v0y = data_dims[1] - 2;
     if (v0z >= data_dims[2] - 1)
         v0z = data_dims[2] - 2;
-    GLfloat lx = x - v0x;
-    GLfloat ly = y - v0y;
-    GLfloat lz = z - v0z;
+    float lx = x - v0x;
+    float ly = y - v0y;
+    float lz = z - v0z;
 
-    GLfloat vxyz = get_raw_data(v0x, v0y, v0z) * (1 - lx) * (1 - ly) * (1 - lz) +
+    float vxyz = get_raw_data(v0x, v0y, v0z) * (1 - lx) * (1 - ly) * (1 - lz) +
                    get_raw_data(v0x + 1, v0y, v0z) * lx * (1 - ly) * (1 - lz) +
                    get_raw_data(v0x + 1, v0y + 1, v0z) * lx * ly * (1 - lz) +
                    get_raw_data(v0x + 1, v0y + 1, v0z + 1) * lx * ly * lz +
@@ -188,20 +180,21 @@ GLfloat MarchingCubes::trilinear_interpolation(float x, float y, float z)
 
 GLfloat MarchingCubes::get_raw_data(int x, int y, int z)
 {
-    int index = z * data_dims[0] * data_dims[1] + y * data_dims[0] + x;
+    int index = z * data_dims.x * data_dims.y + y * data_dims.x + x;
     return raw_data_ptr[index];
 }
 
-int MarchingCubes::get_index(int x, int y, int z, int xsi, int ysi)
+int MarchingCubes::get_index(int x, int y, int z, int num_x, int num_y)
 {
-    return xsi * ysi * z + xsi * y + x;
+    return num_x * num_y * z + num_x * y + x;
 }
 
-glm::vec3 MarchingCubes::vertex_interpolation(float isoLevel, GridCell cell, int p1, int p2)
+glm::vec3 MarchingCubes::vertex_interpolation(float isoLevel, const GridCell &cell, int p1, int p2)
 {
-    GLfloat pos = (isoLevel - cell.val[p1]) / (cell.val[p2] - cell.val[p1]);
-    return cell.pnt[p1] + pos * (cell.pnt[p2] - cell.pnt[p1]);
+    float lamb = (isoLevel - cell.val[p1]) / (cell.val[p2] - cell.val[p1]);
+    return cell.pnt[p1] + lamb * (cell.pnt[p2] - cell.pnt[p1]);
 }
+
 
 void MarchingCubes::threshold_iso_level(GLfloat &isoLevel)
 {
@@ -212,7 +205,7 @@ void MarchingCubes::threshold_iso_level(GLfloat &isoLevel)
 std::vector<float> MarchingCubes::get_grid_points(const glm::vec3 &n_slices, const glm::vec3 &deltas)
 {
     std::vector<float> points(n_slices.x * n_slices.y * n_slices.z);
-
+    std::cout << "[DEBUG] Total Loops: " << (n_slices.z - 2) * (n_slices.y - 2) * (n_slices.z - 2)  << std::endl;
     for (int z = 1; z < n_slices.z - 1; z++)
     {
         for (int y = 1; y < n_slices.y - 1; y++)

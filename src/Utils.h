@@ -50,7 +50,7 @@ namespace Utils
         TOOTH,
     };
 
-    glm::vec3 get_dims(model3d_t model_type);
+    glm::ivec3 get_dims(model3d_t model_type);
 
     GLubyte *load_3d_raw_data(std::string texture_path, glm::vec3 dimension);
 
@@ -80,7 +80,7 @@ namespace Utils
         bool reset = false;
         // Marching Cubes Paramters
         float view_depth = 0.01f;
-        int num_cuts = 50;
+        int num_cuts = 100;
 
         // static bool keys[1024];
         nanogui::Screen *gui_screen = nullptr;

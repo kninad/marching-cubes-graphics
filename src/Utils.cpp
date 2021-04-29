@@ -6,40 +6,40 @@ bool keys[1024];
 
 nanogui::Screen *screen = nullptr;
 
-glm::vec3 Utils::get_dims(Utils::model3d_t model_type)
+glm::ivec3 Utils::get_dims(Utils::model3d_t model_type)
 {
     if (model_type == Utils::BUCKY)
     {
-        return glm::vec3(32, 32, 32);
+        return glm::ivec3(32, 32, 32);
     }
     else if (model_type == Utils::BONSAI)
     {
-        return glm::vec3(512, 512, 154);
+        return glm::ivec3(512, 512, 154);
     }
     else if (model_type == Utils::TEAPOT)
     {
-        return glm::vec3(256, 256, 178);
+        return glm::ivec3(256, 256, 178);
     }
     else if (model_type == Utils::HEAD)
     {
-        return glm::vec3(256, 256, 225);
+        return glm::ivec3(256, 256, 225);
     }
     else if (model_type == Utils::LOBSTER)
     {
-        return glm::vec3(301, 324, 56);
+        return glm::ivec3(301, 324, 56);
     }
         else if (model_type == Utils::ENGINE)
     {
-        return glm::vec3(256, 256, 128);
+        return glm::ivec3(256, 256, 128);
     }
     else if (model_type == Utils::TOOTH)
     {
-        return glm::vec3(103, 94, 161);
+        return glm::ivec3(103, 94, 161);
     }
     else
     {
         std::cout << "invalid model type!";
-        // return glm::vec3(0,0,0);
+        // return glm::ivec3(0,0,0);
         exit(100);
     }
 }
