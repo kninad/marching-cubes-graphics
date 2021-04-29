@@ -32,6 +32,7 @@ TODO
 - Add even more references from the last two lectures of the course! Make detailed notes
   about it!
 
+
 Parameters
 ----------
 
@@ -42,6 +43,7 @@ Parameters
 - Lobster: 0.2, 35
 - Bonsai: 0.11, 150
 - Head: 0.5, 150
+
 
 Marching Cubes
 ==============
